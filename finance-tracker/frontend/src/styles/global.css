@@ -1,0 +1,489 @@
+/* ===================================================================
+   Design tokens -- "Ledger" system
+   A finance app should feel like a well-kept ledger book, not a bank
+   dashboard template: warm paper surfaces, deep ink type, brass for
+   money coming in, rust for money going out, and a hand-stamped
+   circular mark as the one signature flourish.
+   =================================================================== */
+:root {
+  --ink: #16241d;
+  --ink-soft: #45524a;
+  --ink-faint: #7c887f;
+  --paper: #f2ede0;
+  --paper-card: #fbf8f1;
+  --paper-line: #ddd4bf;
+  --brass: #a1751f;
+  --brass-soft: #eadfc4;
+  --rust: #9c3f2a;
+  --rust-soft: #f3ddd4;
+  --sage: #52705d;
+  --sage-soft: #dde7de;
+
+  --font-display: "Fraunces", "Iowan Old Style", serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --shadow-card: 0 1px 2px rgba(22, 36, 29, 0.06), 0 8px 24px -12px rgba(22, 36, 29, 0.18);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+
+p { margin: 0 0 12px; color: var(--ink-soft); line-height: 1.55; }
+
+a { color: var(--sage); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button, input, select, textarea { font-family: inherit; font-size: inherit; }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 2px;
+}
+
+.figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.figure-income { color: var(--brass); }
+.figure-expense { color: var(--rust); }
+
+/* ---------- App shell ---------- */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 232px;
+  flex-shrink: 0;
+  background: var(--ink);
+  color: #ede7d8;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 28px;
+}
+
+.stamp {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid var(--brass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-8deg);
+  flex-shrink: 0;
+}
+
+.stamp::after {
+  content: "";
+  position: absolute;
+}
+
+.stamp-mark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--brass);
+}
+
+.sidebar-logo-text {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: #cfc7b0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  text-align: left;
+  width: 100%;
+}
+
+.sidebar-link:hover { background: rgba(255,255,255,0.06); color: #fff; text-decoration: none; }
+
+.sidebar-link.active {
+  background: rgba(161, 117, 31, 0.22);
+  color: #f2c877;
+}
+
+.sidebar-footer {
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.sidebar-user {
+  font-size: 13px;
+  color: #cfc7b0;
+  margin-bottom: 8px;
+}
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #ede7d8;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  width: 100%;
+  font-size: 13px;
+}
+
+.logout-btn:hover { background: rgba(255,255,255,0.08); }
+
+.main-area {
+  flex: 1;
+  min-width: 0;
+  padding: 32px 40px 60px;
+  max-width: 1180px;
+}
+
+.page-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.page-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 4px;
+}
+
+.rule {
+  border: none;
+  border-top: 1px solid var(--paper-line);
+  margin: 18px 0 28px;
+}
+
+/* ---------- Cards / ledger sheets ---------- */
+.card {
+  background: var(--paper-card);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 20px 22px;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.grid {
+  display: grid;
+  gap: 18px;
+}
+
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+
+@media (max-width: 900px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+  .app-shell { flex-direction: column; }
+  .sidebar { width: 100%; }
+  .main-area { padding: 20px; }
+}
+
+/* ---------- Summary tiles ---------- */
+.summary-tile {
+  background: var(--paper-card);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+}
+
+.summary-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+}
+
+.summary-value {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Forms ---------- */
+.form-row { margin-bottom: 16px; }
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: 2px solid var(--sage);
+  outline-offset: 1px;
+  border-color: var(--sage);
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary { background: var(--ink); color: #f2ede0; }
+.btn-primary:hover { background: #223228; }
+
+.btn-outline { background: transparent; border-color: var(--paper-line); color: var(--ink); }
+.btn-outline:hover { background: var(--paper); }
+
+.btn-danger { background: transparent; border-color: var(--rust-soft); color: var(--rust); }
+.btn-danger:hover { background: var(--rust-soft); }
+
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.error-text { color: var(--rust); font-size: 13px; margin: -8px 0 14px; }
+
+/* ---------- Tables ---------- */
+.ledger-table { width: 100%; border-collapse: collapse; }
+
+.ledger-table th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--paper-line);
+}
+
+.ledger-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--paper-line);
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.ledger-table tr:last-child td { border-bottom: none; }
+
+.pill {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.pill-income { background: var(--brass-soft); color: #6e4e14; }
+.pill-expense { background: var(--rust-soft); color: var(--rust); }
+
+/* ---------- Progress bars (budget) ---------- */
+.progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--paper-line);
+  overflow: hidden;
+}
+
+.progress-fill { height: 100%; border-radius: 999px; background: var(--sage); }
+.progress-fill.over { background: var(--rust); }
+
+/* ---------- Auth pages ---------- */
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  padding: 20px;
+}
+
+.auth-card {
+  width: 380px;
+  background: var(--paper-card);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 32px 30px;
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.auth-logo .stamp { border-color: var(--brass); }
+.auth-logo-text { font-family: var(--font-display); font-size: 20px; font-weight: 600; }
+
+.auth-switch { text-align: center; margin-top: 16px; font-size: 13px; color: var(--ink-soft); }
+
+/* ---------- Insight stamp badge (signature element) ---------- */
+.insight-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 2px solid var(--sage);
+  border-radius: 999px;
+  padding: 4px 12px 4px 10px;
+  transform: rotate(-2deg);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+
+.insight-badge.ai { border-color: var(--brass); color: var(--brass); }
+
+.insight-list { list-style: none; margin: 0; padding: 0; }
+
+.insight-list li {
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--paper-line);
+  font-size: 14px;
+  color: var(--ink);
+  display: flex;
+  gap: 10px;
+}
+
+.insight-list li:last-child { border-bottom: none; }
+
+.insight-list li::before {
+  content: "\2014";
+  color: var(--brass);
+  flex-shrink: 0;
+}
+
+/* ---------- Misc ---------- */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--ink-faint);
+}
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--paper-line);
+  border-top-color: var(--sage);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.badge-risk {
+  background: var(--rust-soft);
+  color: var(--rust);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-ok {
+  background: var(--sage-soft);
+  color: var(--sage);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
